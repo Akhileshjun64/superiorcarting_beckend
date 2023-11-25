@@ -8,7 +8,7 @@ const sendEmail = async (mailOptions) => {
         console.error("Error sending email:", error);
         return reject(error);
       }
-      console.log("Email sent:", info.response);
+
       resolve(info);
     });
   });
