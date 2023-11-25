@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
-const connectToDatabase = async () => {
-  try {
-    await mongoose.connect(process.env.Cloud_DB);
-    console.log("Connected to MongoDB");
-  } catch (error) {
-    console.error("Error connecting to MongoDB:", error.message);
-    // Optionally, you can throw the error to be caught by the calling function
-    throw error;
-  }
-};
 
-// Call the function to connect to the database
-connectToDatabase();
+// Set strictQuery to true to suppress the warning
+mongoose.set("strictQuery", true);
+
+mongoose
+  .connect(process.env.Cloud_DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log("Connected to MongoDB");
+  })
+  .catch((error) => {
+    console.error("Error connecting to MongoDB:", error);
+  });

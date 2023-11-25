@@ -1,6 +1,19 @@
 const contactModel = require("./Model");
 const { transporter } = require("./Middleware");
 
+const sendEmail = async (mailOptions) => {
+  return new Promise((resolve, reject) => {
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending email:", error);
+        return reject(error);
+      }
+      console.log("Email sent:", info.response);
+      resolve(info);
+    });
+  });
+};
+
 exports.contact = async (req, res, next) => {
   try {
     const { name, email, message } = req.body;
@@ -12,8 +25,8 @@ exports.contact = async (req, res, next) => {
     }
 
     const mailOptions = {
-      from: "akhileshjun64@gmail.com",
-      to: "akhileshjun64@gmail.com", // Replace with your own email address
+      from: process.env.EMAIL_FROM,
+      to: process.env.EMAIL_TO,
       subject: `New Enquiry from superiorcarting`,
       html: `
             <h1>New Enquiry</h1>
@@ -23,8 +36,10 @@ exports.contact = async (req, res, next) => {
           `,
     };
 
-    await transporter.sendMail(mailOptions);
+    // Send email
+    await sendEmail(mailOptions);
 
+    // Save data to the database
     const contactData = new contactModel({
       name,
       email,
